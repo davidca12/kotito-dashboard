@@ -18,6 +18,7 @@ class School(db.Model):
         return {
             "id": self.id,
             "name": self.name,
+            " kotokan_id":self. kotokan_id
             # do not serialize the password, its a security breach
         }
 
@@ -75,6 +76,7 @@ class Student(db.Model):
     name = db.Column(db.String(120), unique=True, nullable=False)
     last_name= db.Column(db.String(120), unique=True, nullable=False)
     avatar = db.Column(db.String(255), unique=True, nullable=False)
+    
 
     kotokan_id = db.Column(db.String(120), unique=True, nullable=False)
 

@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User
+from models import db, User, School
 #from models import Person
 
 app = Flask(__name__)
@@ -38,6 +38,13 @@ def handle_hello():
     }
 
     return jsonify(response_body), 200
+
+@app.route('/schools/<int:school_id>', methods=['GET'])
+def school_data():
+
+    school= School.query.get(school_id)
+    
+    return jsonify(school), 200
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
