@@ -55,6 +55,8 @@ class Enrollment(db.Model):
     id = db.Column('id', db.Integer, primary_key=True)
     game_status = db.Column(db.Text, nullable=False)
     
+    # created_at = db.Column(db.DateTime(), nullable=False, default=db.func.current_timestamp()) no se si lo utlizaremos
+
     def serialize (self):
         return{
             "game_status":game_status
