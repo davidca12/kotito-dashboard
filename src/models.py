@@ -40,7 +40,7 @@ class User(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "email": self.email,
+            "name": self.name,
             # do not serialize the password, its a security breach
         }
 
@@ -54,11 +54,17 @@ class Enrollment(db.Model):
     __table_args__ = {'extend_existing': True} 
     id = db.Column('id', db.Integer, primary_key=True)
     game_status = db.Column(db.Text, nullable=False)
+    
+    def serialize (self):
+        return{
+            "game_status":game_status
+        }
 
 class Course(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), unique=True, nullable=False)
     kotokan_id = db.Column(db.String(120), unique=True, nullable=False)
+
     #relacion con el user de 1 to many
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user = db.relationship("User")
@@ -71,6 +77,7 @@ class Course(db.Model):
             "id": self.id,
             "name": self.name
         }
+
 class Student(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), unique=True, nullable=False)
