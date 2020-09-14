@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User, School, Student
+from models import db, User, School, Student,Course, Enrollment
 #from models import Person
 
 app = Flask(__name__)
@@ -39,44 +39,56 @@ def sitemap():
 
 #    return jsonify(response_body), 200
 
-@app.route('/school/<int:school_id>', methods=['GET'])
+@app.route('/schools/<int:school_id>', methods=['GET'])
 def school_data(school_id):
 
     school= School.query.get(school_id)
     
     return jsonify(school), 200
 
-@app.route('/user/<int:user_id>', methods=['GET'])
+@app.route('/users/<int:user_id>', methods=['GET'])
 def user_data(user_id):
 
     user= User.query.get(user_id)
     
     return jsonify(user), 200
 
-@app.route('/course/<int:course_id>', methods=['GET'])
+@app.route('/courses/<int:course_id>', methods=['GET'])
 def course_data(course_id):
 
     course= Course.query.get(course_id)
     
     return jsonify(course), 200
 
-@app.route('/student/<int:student_id>', methods=['GET'])
+@app.route('/students/<int:student_id>', methods=['GET'])
 def student_data(student_id):
 
     student= Student.query.get(student_id)
     
     return jsonify(student), 200
 
-@app.route('/enrollment/', methods=['GET'])
+@app.route('/enrollments/', methods=['GET'])
 def enrollment_data():
 
-    
 
     enrollment= Enrollment.query.all()
     all_enrollment= list(map(lambda x: x.serialize(), enrollment))
 
     
     return jsonify(all_enrollment), 200
+
+
+
+@app.route('/user', methods=['GET'])
+def handle_hello():
+
+    
+
+    users= User.query.all()
+    all_users= list(map(lambda x: x.serialize(), users))
+
+
+    return jsonify(all_users), 200
 
 
 # this only runs if `$ python src/main.py` is executed
