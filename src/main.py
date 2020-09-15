@@ -44,28 +44,28 @@ def school_data(school_id):
 
     school= School.query.get(school_id)
     
-    return jsonify(school), 200
+    return jsonify(school.serialize()), 200
 
 @app.route('/users/<int:user_id>', methods=['GET'])
 def user_data(user_id):
 
     user= User.query.get(user_id)
     
-    return jsonify(user), 200
+    return jsonify(user.serialize()), 200
 
 @app.route('/courses/<int:course_id>', methods=['GET'])
 def course_data(course_id):
 
     course= Course.query.get(course_id)
     
-    return jsonify(course), 200
+    return jsonify(course.serialize()), 200
 
 @app.route('/students/<int:student_id>', methods=['GET'])
 def student_data(student_id):
 
     student= Student.query.get(student_id)
     
-    return jsonify(student), 200
+    return jsonify(student.serialize()), 200
 
 @app.route('/enrollments/', methods=['GET'])
 def enrollment_data():
