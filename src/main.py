@@ -9,6 +9,9 @@ from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
 from models import db, User, School, Student,Course, Enrollment
+
+import requests
+
 #from models import Person
 
 app = Flask(__name__)
@@ -102,6 +105,22 @@ def handle_hello():
 
 
     return jsonify(all_users), 200
+
+@app.route('/school', methods=['GET'])
+def request_School():
+
+    
+
+    res = requests.get('http://us-central1-thinkinghatwonder.cloudfunctions.net/getSchools')
+
+    x = res.json()
+
+    
+
+    print("Github's status is currently:--------->", x[0]['schoolCode'])    
+ 
+
+    return jsonify("hecho"), 200
 
 
 # this only runs if `$ python src/main.py` is executed
