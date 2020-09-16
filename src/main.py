@@ -60,6 +60,19 @@ def course_data(course_id):
     
     return jsonify(course.serialize()), 200
 
+@app.route('/courses/', methods=['GET'])
+def course_dataAll():
+
+    
+    courses= Course.query.all()
+    all_courses= list(map(lambda x: x.serialize(), courses))
+
+
+    return jsonify( all_courses), 200
+    
+    
+
+
 @app.route('/students/<int:student_id>', methods=['GET'])
 def student_data(student_id):
 
@@ -79,7 +92,7 @@ def enrollment_data():
 
 
 
-@app.route('/user', methods=['GET'])
+@app.route('/users', methods=['GET'])
 def handle_hello():
 
     

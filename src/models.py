@@ -59,7 +59,7 @@ class Enrollment(db.Model):
 
     def serialize (self):
         return{
-            "game_status":game_status
+            "game_status":self.game_status
         }
 
 class Course(db.Model):
