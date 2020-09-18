@@ -105,6 +105,18 @@ def handle_hello():
 
 
     return jsonify(all_users), 200
+@app.route('/schools', methods=['GET'])
+def all_school():
+
+    
+
+    schools= School.query.all()
+    all_schools= list(map(lambda x: x.serialize(), schools))
+
+
+    return jsonify(all_schools), 200
+
+
 
 @app.route('/school', methods=['GET'])
 def request_School():
@@ -117,10 +129,29 @@ def request_School():
 
     
 
-    print("Github's status is currently:--------->", x[0]['schoolCode'])    
- 
+    print("Github's status is currently:--------->", x[0]['schoolCode'])  
+
+    kotokan_id1=""
+    name1=""
+
+
+    for i in range(len(x)):
+        for c,v in x[i].items():
+            if c=="schoolCode" and v!="":
+                kotokan_id1=v
+                print(kotokan_id1)
+            elif c=="name" and v!="":
+                name1=v
+                print(name1)
+
+        school1=School(name=name1,kotokan_id=kotokan_id1)
+        db.session.add(school1)
+    db.session.commit()
+    
+                 
 
     return jsonify("hecho"), 200
+
 
 
 # this only runs if `$ python src/main.py` is executed
