@@ -54,6 +54,9 @@ class School(db.Model):
             # do not serialize the password, its a security breach
         }
 
+
+
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name= db.Column(db.String(120), unique=True, nullable=False)
@@ -111,10 +114,37 @@ class Course(db.Model):
             "name": self.name
         }
 
+
+class StudentManager():
+    @staticmethod
+    def getStudents():
+        student={
+                "gameStatus": 45,
+                "age": "44",
+                "id": "1uuo9IBzDQaMOZoHevha",
+                "grade": "12",
+                "name": "test nuevo",
+                "avatar":{
+                    "static": "https://firebasestorage.googleapis.com/v0/b/thinkinghatwonder-eu/o/images%2Favatars%2FJolia_1.png?alt=media&token=8030ea96-07b3-44d8-abfe-e084251e8857",
+                    "gif": "https://firebasestorage.googleapis.com/v0/b/thinkinghatwonder-eu/o/images%2Favatars%2FJolia_1.gif?alt=media&token=369f7ce6-7b83-4a3a-8ac1-3cd89741b52d"
+                }
+            }
+        school1 = School(
+        name = "hola",
+        kotokan_id = "1",
+        ) 
+        db.session.add(school1)
+        db.session.commit()
+
+        
+        student1 = Student(name=student["name"], avatar=student["avatar"], game_status= student["gameStatus"],kotokan_id=student["id"],school_id=1)
+        db.session.add(student1)
+        db.session.commit()
+
 class Student(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), unique=True, nullable=False)
-    last_name= db.Column(db.String(120), unique=True, nullable=False)
+    #last_name= db.Column(db.String(120), unique=True, nullable=False)
     avatar = db.Column(db.String(255), unique=True, nullable=False)
 
     game_status = db.Column(db.Text, nullable=False)
@@ -135,7 +165,8 @@ class Student(db.Model):
         return {
             "id": self.id,
             "name": self.name,
-            "last_name": self.last_name
+            "game_status": self.game_status,
+            "avatar":self.avatar
         }
 
 

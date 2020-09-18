@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User, School, Student,Course, Enrollment
+from models import db, User, School, Student,Course, Enrollment,StudentManager
 
 import requests
 
@@ -31,6 +31,7 @@ def handle_invalid_usage(error):
 # generate sitemap with all your endpoints
 @app.route('/')
 def sitemap():
+    StudentManager.getStudents()
     return generate_sitemap(app)
 
 #@app.route('/user', methods=['GET'])
