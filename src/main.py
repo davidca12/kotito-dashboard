@@ -117,7 +117,7 @@ def all_school():
     return jsonify(all_schools), 200
 
 
-
+"""
 @app.route('/school', methods=['GET'])
 def request_School():
 
@@ -131,20 +131,60 @@ def request_School():
 
     print("Github's status is currently:--------->", x[0]['schoolCode'])  
 
-    kotokan_id1=""
+    kotokan_code=""
     name1=""
 
 
     for i in range(len(x)):
         for c,v in x[i].items():
-            if c=="schoolCode" and v!="":
-                kotokan_id1=v
-                print(kotokan_id1)
+            if c=="schoolCode" and v!="": 
+                
+                kotokan_code=v
+               
+                #print(kotokan_id1)
             elif c=="name" and v!="":
                 name1=v
-                print(name1)
+                #print(name1)
 
-        school1=School(name=name1,kotokan_id=kotokan_id1)
+        school1=School(name=name1,kotokan_id=kotokan_code)
+        db.session.add(school1)
+    db.session.commit()
+    
+                 
+
+    return jsonify("hecho"), 200
+""" 
+
+
+@app.route('/student', methods=['GET'])
+def request_Student():
+
+    
+    
+
+    res = requests.get(urlGamestatus)
+
+    x = res.json()
+
+    name1=""
+    gameStatus={}
+    grade=''
+    avatar={}
+
+
+
+    for i in range(len(x)):
+        for c,v in x[i].items():
+            if c=="schoolCode" and v!="": 
+                
+                kotokan_code=v
+               
+                #print(kotokan_id1)
+            elif c=="name" and v!="":
+                name1=v
+                #print(name1)
+
+        school1=School(name=name1,kotokan_id=kotokan_code)
         db.session.add(school1)
     db.session.commit()
     

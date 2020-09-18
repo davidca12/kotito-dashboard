@@ -1,5 +1,36 @@
+import requests
 from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
+
+class SchoolManager():
+
+    @staticmethod
+    def getSchools():
+        res = requests.get('http://us-central1-thinkinghatwonder.cloudfunctions.net/getSchools')
+
+        x = res.json()
+
+        print("Github's status is currently:--------->", x[0]['schoolCode'])  
+
+        kotokan_code=""
+        name1=""
+
+
+        for i in range(len(x)):
+            for c,v in x[i].items():
+                if c=="schoolCode" and v!="": 
+                    
+                    kotokan_code=v
+                
+                    #print(kotokan_id1)
+                elif c=="name" and v!="":
+                    name1=v
+                    #print(name1)
+            school1=School(name=name1,kotokan_id=kotokan_code)
+            db.session.add(school1)    
+        db.session.commit()
+
+
 
 class School(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -11,6 +42,7 @@ class School(db.Model):
    
     #relacion
     users = db.relationship('User', lazy=True)
+
 
     def __repr__(self):
         return '<School %r>' % self.name
@@ -53,14 +85,13 @@ class Enrollment(db.Model):
     __tablename__ = "enrollment"
     __table_args__ = {'extend_existing': True} 
     id = db.Column('id', db.Integer, primary_key=True)
-    game_status = db.Column(db.Text, nullable=False)
+   
     
     # created_at = db.Column(db.DateTime(), nullable=False, default=db.func.current_timestamp()) no se si lo utlizaremos
 
-    def serialize (self):
-        return{
-            "game_status":self.game_status
-        }
+    def __repr__(self):
+        return '<Course %r>' % self.id
+   
 
 class Course(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -85,6 +116,8 @@ class Student(db.Model):
     name = db.Column(db.String(120), unique=True, nullable=False)
     last_name= db.Column(db.String(120), unique=True, nullable=False)
     avatar = db.Column(db.String(255), unique=True, nullable=False)
+
+    game_status = db.Column(db.Text, nullable=False)
     
 
     kotokan_id = db.Column(db.String(120), unique=True, nullable=False)
@@ -104,3 +137,6 @@ class Student(db.Model):
             "name": self.name,
             "last_name": self.last_name
         }
+
+
+    
