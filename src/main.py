@@ -84,6 +84,14 @@ def student_data(student_id):
     
     return jsonify(student.serialize()), 200
 
+@app.route('/students', methods=['GET'])
+def all_student_data():
+
+    student= Student.query.all()
+    all_students= list(map(lambda x: x.serialize(), student))
+    
+    return jsonify(all_students), 200
+
 @app.route('/enrollments/', methods=['GET'])
 def enrollment_data():
 
@@ -157,41 +165,7 @@ def request_School():
 """ 
 
 
-@app.route('/student', methods=['GET'])
-def request_Student():
 
-    
-    
-
-    res = requests.get(urlGamestatus)
-
-    x = res.json()
-
-    name1=""
-    gameStatus={}
-    grade=''
-    avatar={}
-
-
-
-    for i in range(len(x)):
-        for c,v in x[i].items():
-            if c=="schoolCode" and v!="": 
-                
-                kotokan_code=v
-               
-                #print(kotokan_id1)
-            elif c=="name" and v!="":
-                name1=v
-                #print(name1)
-
-        school1=School(name=name1,kotokan_id=kotokan_code)
-        db.session.add(school1)
-    db.session.commit()
-    
-                 
-
-    return jsonify("hecho"), 200
 
 
 

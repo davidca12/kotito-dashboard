@@ -36,7 +36,7 @@ class SchoolManager():
 class School(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     kotokan_id = db.Column(db.String(120), unique=True, nullable=False)
-    name= db.Column(db.String(120), unique=False, nullable=False)
+    name= db.Column(db.String(120), unique=True, nullable=False)
 
     #relacion uno a muchos con estudiantes.
     students = db.relationship('Student', lazy=True)
@@ -122,8 +122,8 @@ class StudentManager():
         #json a string
         response=json.dumps(
             {
-                "name":"juancho",
-                "avatar": "erase una vez",
+                "name":"juancho1",
+                "avatar": "erase una vez y adios",
                 "id": "string",    
                 "gameStatus": {
                     "stage": {
@@ -280,23 +280,26 @@ class StudentManager():
         #print (school)
     
         
-
+    
         
         school1 = School(
-        name = "dadaddasdasafasdassaddadasdaasgggaa",
-        kotokan_id = "243333555535553444312",
+        name = "dadadgdggdsdaasgggaa",
+        kotokan_id = "25842",
+        id=18
         ) 
         db.session.add(school1)
         db.session.commit()
 
         
 
-        student1 = Student(name=student["name"], avatar=student["avatar"], game_status= gamestatusText,kotokan_id=student["id"],school_id=2)
+        student1 = Student(name=student["name"], avatar=student["avatar"], game_status= gamestatusText,kotokan_id=student["id"],school_id=18)
         print ("adioss---------->>>>>>>>>>>>>>>>",gamestatusText)
+
+        print(student1)
         
         db.session.add(student1)
         db.session.commit()
-        
+       
 
 class Student(db.Model):
     id = db.Column(db.Integer, primary_key=True)
