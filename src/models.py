@@ -122,9 +122,9 @@ class StudentManager():
         #json a string
         response=json.dumps(
             {
-                "name":"juancho1",
-                "avatar": "erase una vez y adios",
-                "id": "string",    
+                "name":"juancho23231",
+                "avatar": "erase una vez y adios y adios adioas",
+                "id": "unico",    
                 "gameStatus": {
                     "stage": {
                     "1": {
@@ -281,7 +281,7 @@ class StudentManager():
     
         
     
-        
+        """
         school1 = School(
         name = "dadadgdggdsdaasgggaa",
         kotokan_id = "25842",
@@ -289,6 +289,9 @@ class StudentManager():
         ) 
         db.session.add(school1)
         db.session.commit()
+        """
+
+        school1 = db.session.query(School).one()
 
         
 
@@ -322,10 +325,12 @@ class Student(db.Model):
     def __repr__(self):
         return '<Student %r>' % self.name
     def serialize(self):
+
+        game_status_json=json.loads(self.game_status)
         return {
             "id": self.id,
             "name": self.name,
-            "game_status": self.game_status,
+            "game_status": game_status_json,
             "avatar":self.avatar
         }
 
