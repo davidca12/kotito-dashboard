@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User, School, Student,Course, Enrollment,StudentManager
+from models import db, Teacher, School, Student,StudentManager,SchoolManager
 
 import requests
 
@@ -31,17 +31,18 @@ def handle_invalid_usage(error):
 # generate sitemap with all your endpoints
 @app.route('/')
 def sitemap():
+    #SchoolManager.getSchools()
     StudentManager.getStudents()
     return generate_sitemap(app)
 
-#@app.route('/user', methods=['GET'])
-#def handle_hello():
+@app.route('/schools', methods=['GET'])
+def all_school():
 
-#    response_body = {
-#        "msg": "Hello, this is your GET /user response "
-#    }
+    schools= School.query.all()
+    all_schools= list(map(lambda x: x.serialize(), schools))
 
-#    return jsonify(response_body), 200
+
+    return jsonify(all_schools), 200
 
 @app.route('/schools/<int:school_id>', methods=['GET'])
 def school_data(school_id):
@@ -50,33 +51,22 @@ def school_data(school_id):
     
     return jsonify(school.serialize()), 200
 
-@app.route('/users/<int:user_id>', methods=['GET'])
-def user_data(user_id):
+@app.route('/teachers/<int:teacher_id>', methods=['GET'])
+def teacher_data(teacher_id):
 
-    user= User.query.get(user_id)
+    teacher= Teacher.query.get(teacher_id)
     
-    return jsonify(user.serialize()), 200
-
-@app.route('/courses/<int:course_id>', methods=['GET'])
-def course_data(course_id):
-
-    course= Course.query.get(course_id)
-    
-    return jsonify(course.serialize()), 200
-
-@app.route('/courses/', methods=['GET'])
-def course_dataAll():
-
-    
-    courses= Course.query.all()
-    all_courses= list(map(lambda x: x.serialize(), courses))
-
-
-    return jsonify( all_courses), 200
-    
+    return jsonify(teacher.serialize()), 200
     
 
+@app.route('/teachers', methods=['GET'])
+def handle_hello():
 
+    teachers= Teacher.query.all()
+    all_teachers= list(map(lambda x: x.serialize(), teachers))
+    
+    return jsonify(all_teachers), 200
+       
 @app.route('/students/<int:student_id>', methods=['GET'])
 def student_data(student_id):
 
@@ -91,82 +81,6 @@ def all_student_data():
     all_students= list(map(lambda x: x.serialize(), student))
     
     return jsonify(all_students), 200
-
-@app.route('/enrollments/', methods=['GET'])
-def enrollment_data():
-
-
-    enrollment= Enrollment.query.all()
-    all_enrollment= list(map(lambda x: x.serialize(), enrollment))
-
-    
-    return jsonify(all_enrollment), 200
-
-
-
-@app.route('/users', methods=['GET'])
-def handle_hello():
-
-    
-
-    users= User.query.all()
-    all_users= list(map(lambda x: x.serialize(), users))
-
-
-    return jsonify(all_users), 200
-@app.route('/schools', methods=['GET'])
-def all_school():
-
-    
-
-    schools= School.query.all()
-    all_schools= list(map(lambda x: x.serialize(), schools))
-
-
-    return jsonify(all_schools), 200
-
-
-"""
-@app.route('/school', methods=['GET'])
-def request_School():
-
-    
-
-    res = requests.get('http://us-central1-thinkinghatwonder.cloudfunctions.net/getSchools')
-
-    x = res.json()
-
-    
-
-    print("Github's status is currently:--------->", x[0]['schoolCode'])  
-
-    kotokan_code=""
-    name1=""
-
-
-    for i in range(len(x)):
-        for c,v in x[i].items():
-            if c=="schoolCode" and v!="": 
-                
-                kotokan_code=v
-               
-                #print(kotokan_id1)
-            elif c=="name" and v!="":
-                name1=v
-                #print(name1)
-
-        school1=School(name=name1,kotokan_id=kotokan_code)
-        db.session.add(school1)
-    db.session.commit()
-    
-                 
-
-    return jsonify("hecho"), 200
-""" 
-
-
-
-
 
 
 # this only runs if `$ python src/main.py` is executed
