@@ -13,6 +13,7 @@ class SchoolManager():
         kotokan_code=""
         name1=""
 
+        if len(x) < 1:
         for i in range(len(x)):
             for c,v in x[i].items():
                 if c=="schoolCode" and v!="": 
