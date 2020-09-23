@@ -13,7 +13,7 @@ class SchoolManager():
         kotokan_code=""
         name1=""
 
-        if len(x) < 1:
+        #if len(x) < 1:
         for i in range(len(x)):
             for c,v in x[i].items():
                 if c=="schoolCode" and v!="": 
@@ -33,13 +33,13 @@ class StudentManager():
             
                 
                 {
-                    "name":"dsadsadddadssgdsdsfgfdassecond",
+                    "name":"dsadsadddadssgdsddfdsfgfdassecond",
                     "avatar": {
-                        "name": "pepidstssos",
+                        "name": "pepidstfddssos",
                         "static": "https://firebasestorage.googleapis.com/v0/b/thinkinghatwonder-eu/o/images%2Favatars%2FJolia_1.png?alt=media&token=8030ea96-07b3-44d8-abfe-e084251e8857",
                         "gif": "https://firebasestorage.googleapis.com/v0/b/thinkinghatwonder-eu/o/images%2Favatars%2FJolia_1.gif?alt=media&token=369f7ce6-7b83-4a3a-8ac1-3cd89741b52d"
                     },
-                    "id": "unicosss32323233334",    
+                    "id": "unicosss3232323333444",    
                     "gameStatus": {
                         "stage": {
                         "1": {
@@ -205,10 +205,10 @@ class StudentManager():
         """
 
         teacher1 = Teacher(
-        name = "dssdssssddsfdsd",
-        email="pepitsasdsdfdfddddddssso@gmail.com",
+        name = "dssdsssdsssddsfdsd",
+        email="pepitsasssdsdfdfddddddssso@gmail.com",
         school_id=1,
-        password="123456789"
+        password="1234567891"
         ) 
         db.session.add(teacher1)
         db.session.commit()
@@ -216,7 +216,7 @@ class StudentManager():
 
         #school1 = db.session.query(School).first()
 
-        student1 = Student(name=student["name"], avatar=avatarText, game_status= gamestatusText,kotokan_id=student["id"],teacher_id=1,school_id=1)
+        student1 = Student(name=student["name"], avatar=avatarText, game_status= gamestatusText,kotokan_id=student["id"],teacher_id=3,school_id=1)
         print ("adioss---------->>>>>>>>>>>>>>>>",avatarText)
 
         print(student1)

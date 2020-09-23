@@ -38,7 +38,7 @@ def handle_invalid_usage(error):
 # generate sitemap with all your endpoints
 @app.route('/')
 def sitemap():
-    SchoolManager.getSchools()
+    #SchoolManager.getSchools()
     StudentManager.getStudents()
     return generate_sitemap(app)
 
