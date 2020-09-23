@@ -214,7 +214,7 @@ class StudentManager():
 
         #school1 = db.session.query(School).first()
 
-        student1 = Student(name=student["name"], avatar=avatarText, game_status= gamestatusText,kotokan_id=student["id"],teacher_id=2)
+        student1 = Student(name=student["name"], avatar=avatarText, game_status= gamestatusText,kotokan_id=student["id"],teacher_id=2,school_id=1)
         print ("adioss---------->>>>>>>>>>>>>>>>",avatarText)
 
         print(student1)
@@ -231,8 +231,11 @@ class School(db.Model):
     kotokan_id = db.Column(db.String(120), unique=True, nullable=False)
     name= db.Column(db.String(120), unique=False, nullable=False)
    
-    #relacion uno a muchos
+    #relacion uno a muchos con los profesores
     teachers = db.relationship('Teacher', lazy=True)
+
+    #relacion uno a muchos con los estudiatnes
+    students = db.relationship('Student', lazy=True)
 
     def __repr__(self):
         return '<School %r>' % self.name
@@ -275,9 +278,14 @@ class Student(db.Model):
     kotokan_id = db.Column(db.String(120), unique=True, nullable=False)
 
 
-    #esto marca la relacion que tengo con la school de unos a muchos
+    #esto marca la relacion que tengo con el profesor de unos a muchos
     teacher_id = db.Column(db.Integer, db.ForeignKey('teacher.id'), nullable=False)
-    teacher = db.relationship("Teacher")     
+    teacher = db.relationship("Teacher")
+
+    #esto marca la relacion que tengo con la school de unos a muchos
+    school_id = db.Column(db.Integer, db.ForeignKey('school.id'), nullable=False)
+    school = db.relationship("School")     
+     
 
     def __repr__(self):
         return '<Student %r>' % self.name
