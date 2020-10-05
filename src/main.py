@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, Teacher, School, Student,StudentManager,SchoolManager
+from models import db, Teacher, School, Student,StudentManager,SchoolManager,TeachersManager
 import requests
 
 #Token and login
@@ -38,8 +38,9 @@ def handle_invalid_usage(error):
 # generate sitemap with all your endpoints
 @app.route('/')
 def sitemap():
-    #SchoolManager.getSchools()
-    StudentManager.getStudents()
+    SchoolManager.getSchools()
+    #StudentManager.getStudents()
+    #TeachersManager.getTeachers()
     return generate_sitemap(app)
 
 def token_required(f):  
