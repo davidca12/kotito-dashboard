@@ -1,17 +1,30 @@
+import os
+from dotenv import load_dotenv
+
 import requests
 import json
 from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
+API_HOST = os.getenv('API_HOST')
+API_TOKEN=os.getenv('API_TOKEN')
 
 class SchoolManager():
     @staticmethod
     def getSchools():
-        res = requests.get('http://us-central1-thinkinghatwonder.cloudfunctions.net/getSchools')
+
+        url =f"{API_HOST}/getSchools"
+        headers = {
+            'Authorization': API_TOKEN ,
+            'Content-Type' : 'application/json'
+        }
+
+        res = requests.request("POST", url , headers=headers)
         x = res.json()
 
         kotokan_code=""
         name1=""
+
 
         #if len(x) < 1:
         for i in range(len(x)):
@@ -20,9 +33,20 @@ class SchoolManager():
                     kotokan_code=v
                 elif c=="name" and v!="":
                     name1=v
-            school1=School(name=name1,kotokan_id=kotokan_code)
-            db.session.add(school1)    
-        db.session.commit()
+
+            if School.query.filter_by(kotokan_id=kotokan_code).first() is None:
+                school1=School(name=name1,kotokan_id=kotokan_code)
+                db.session.add(school1)
+                db.session.commit()
+
+
+class TeachersManager():
+    @staticmethod
+    def getTeachers():
+         
+
+        
+
 
 
 class StudentManager():
