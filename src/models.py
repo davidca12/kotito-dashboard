@@ -94,9 +94,7 @@ class StudentManager():
             'Content-Type' : 'application/json'
         }
 
-
-        #loads: string a json
-        #dumps: json a string
+        #loads: string a json / dumps: json a string
 
         response = requests.post( url , headers=headers, data= json.dumps(payload))
         result = response.json()
@@ -104,20 +102,38 @@ class StudentManager():
         result_string=json.dumps(result)
         result_json = json.loads(result_string)
 
-        """ print(type(result))
-        print(len(result))
-        print(result[0])
-        print(result[0]["name"]) """
+        # """ print(type(result))
+        # print(len(result))
+        # print(result[0])
+        # print(result[0]["name"]) """
 
+        
         for student in result:
-            
-            print("avatar" in student.keys()) 
-            
-            #print(student["name"])
+            # print("avatar" in student.keys())
+            avatar = "avatar" in student.keys()
+            name = "name" in student.keys()
+            gameStatus = "gameStatus" in student.keys()
+            kotokanId = "id" in student.keys()
 
+            if avatar == False:
+                student["avatar"] = "Empty"
+                # print(student["avatar"])
+
+            if name == False:
+                student["name"] = "Anonimous"
+                # print(student["name"])
             
-            #row = Student.query.filter_by(kotokan_id=student["id"]).first()
-"""             if not row:
+            if gameStatus == False:
+                student["gameStatus"] = "Not information"
+                # print(student["gameStatus"])
+            
+            if kotokanId == False:
+                student["id"] = "Anonimous"
+                # print(student["id"])
+
+            row = Student.query.filter_by(kotokan_id=student["id"]).first()
+
+            if not row:
                 row = Student(
                     kotokan_id=student["id"],
                     name= student["name"],
@@ -127,7 +143,8 @@ class StudentManager():
                     teacher_id=teacher.id
                 )
                 db.session.add(row)
-                db.session.commit() """
+                db.session.commit()
+            StudentManager.getStudents(row,school.kotokan_id,school.id)
                 
           
 
