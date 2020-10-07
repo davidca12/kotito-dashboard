@@ -39,7 +39,9 @@ def handle_invalid_usage(error):
 @app.route('/')
 def sitemap():
     SchoolManager.getSchools()
-    #StudentManager.getStudents()
+
+    #StudentManager.getStudents(11,"oi0ztsj1sBPvSvWUgMvyK2SEnrF3","testCode",6)
+
     #TeachersManager.getTeachers()
     return generate_sitemap(app)
 

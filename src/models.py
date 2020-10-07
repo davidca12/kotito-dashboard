@@ -84,7 +84,6 @@ class StudentManager():
     @staticmethod
     def getStudents(teacher,schoolCode,schooldId):
         #json a string [] arraylista, {}objeto,diccionario
-
         
         payload = {"accountId": teacher.kotokan_id,"schoolCode" : schoolCode}
 
@@ -105,11 +104,17 @@ class StudentManager():
         result_string=json.dumps(result)
         result_json = json.loads(result_string)
 
-    
-
+        """ print(type(result))
+        print(len(result))
+        print(result[0])
+        print(result[0]["name"]) """
 
         for student in result:
-            print("2")
+            
+            print("avatar" in student.keys()) 
+            
+            #print(student["name"])
+
             
             #row = Student.query.filter_by(kotokan_id=student["id"]).first()
 """             if not row:
