@@ -60,7 +60,6 @@ class TeachersManager():
 
         for teacher in result:
             row = Teacher.query.filter_by(kotokan_id=teacher["id"]).first()
-            print(teacher["currentPlan"]["renewalDate"]["_seconds"])
             
             if not row:
                 row = Teacher(
@@ -73,6 +72,7 @@ class TeachersManager():
                 )
                 db.session.add(row)
                 db.session.commit()
+            StudentManager.getStudents(row,school.kotokan_id,school.id)
                     
          
 
@@ -82,205 +82,50 @@ class TeachersManager():
 
 class StudentManager():
     @staticmethod
-    def getStudents():
+    def getStudents(teacher,schoolCode,schooldId):
         #json a string [] arraylista, {}objeto,diccionario
-        response=json.dumps(
+
+        
+        payload = {"accountId": teacher.kotokan_id,"schoolCode" : schoolCode}
+
+        #payload= f"{schoolCode: {kotokan_code}}"
+        url =f"{API_HOST}/getPlayersBySchoolCode"
+        headers = {
+            'Authorization': API_TOKEN ,
+            'Content-Type' : 'application/json'
+        }
+
+
+        #loads: string a json
+        #dumps: json a string
+
+        response = requests.post( url , headers=headers, data= json.dumps(payload))
+        result = response.json()
+
+        result_string=json.dumps(result)
+        result_json = json.loads(result_string)
+
+    
+
+
+        for student in result:
+            print("2")
             
+            #row = Student.query.filter_by(kotokan_id=student["id"]).first()
+"""             if not row:
+                row = Student(
+                    kotokan_id=student["id"],
+                    name= student["name"],
+                    avatar=1,
+                    game_status=0,
+                    school_id=schooldId,
+                    teacher_id=teacher.id
+                )
+                db.session.add(row)
+                db.session.commit() """
                 
-                {
-                    "name":"dsadsadddadssgdsddfdsfgfdassecond",
-                    "avatar": {
-                        "name": "pepidstfddssos",
-                        "static": "https://firebasestorage.googleapis.com/v0/b/thinkinghatwonder-eu/o/images%2Favatars%2FJolia_1.png?alt=media&token=8030ea96-07b3-44d8-abfe-e084251e8857",
-                        "gif": "https://firebasestorage.googleapis.com/v0/b/thinkinghatwonder-eu/o/images%2Favatars%2FJolia_1.gif?alt=media&token=369f7ce6-7b83-4a3a-8ac1-3cd89741b52d"
-                    },
-                    "id": "uni344334",    
-                    "gameStatus": {
-                        "stage": {
-                        "1": {
-                            "countHachi": 4,
-                            "level": {
-                            "1": {
-                                "problem": {
-                                "1": {
-                                    "completed": True,
-                                    "difficulty": {
-                                    "1": {
-                                        "completed": True,
-                                        "playCount": 1,
-                                        "started": True,
-                                        "points": 55,
-                                        "id": 1
-                                    },
-                                    "2": {
-                                        "playCount": 0,
-                                        "started": False,
-                                        "points": 0,
-                                        "id": 1,
-                                        "completed": False
-                                    },
-                                    "3": {
-                                        "completed": False,
-                                        "playCount": 0,
-                                        "started": False,
-                                        "points": 0,
-                                        "id": 1
-                                    },
-                                    "4": {
-                                        "playCount": 0,
-                                        "started": False,
-                                        "points": 0,
-                                        "id": 1,
-                                        "completed": False
-                                    }
-                                    }
-                                },
-                                "2": {
-                                    "completed": True,
-                                    "difficulty": {
-                                    "1": {
-                                        "completed": False,
-                                        "playCount": 0,
-                                        "started": False,
-                                        "points": 0,
-                                        "id": 2
-                                    },
-                                    "2": {
-                                        "playCount": 1,
-                                        "started": True,
-                                        "points": 94,
-                                        "id": 2,
-                                        "completed": True
-                                    },
-                                    "3": {
-                                        "completed": False,
-                                        "playCount": 0,
-                                        "started": False,
-                                        "points": 0,
-                                        "id": 2
-                                    },
-                                    "4": {
-                                        "completed": False,
-                                        "playCount": 0,
-                                        "started": False,
-                                        "points": 0,
-                                        "id": 2
-                                    }
-                                    }
-                                },
-                                "3": {
-                                    "difficulty": {
-                                    "1": {
-                                        "completed": False,
-                                        "playCount": 0,
-                                        "started": False,
-                                        "points": 0,
-                                        "id": 3
-                                    },
-                                    "2": {
-                                        "completed": False,
-                                        "playCount": 0,
-                                        "started": False,
-                                        "points": 0,
-                                        "id": 3
-                                    },
-                                    "3": {
-                                        "playCount": 0,
-                                        "started": True,
-                                        "points": 0,
-                                        "id": 3,
-                                        "completed": False
-                                    },
-                                    "4": {
-                                        "completed": False,
-                                        "playCount": 0,
-                                        "started": False,
-                                        "points": 0,
-                                        "id": 3
-                                    }
-                                    }
-                                },
-                                "4": {
-                                    "difficulty": {
-                                    "1": {
-                                        "playCount": 0,
-                                        "started": False,
-                                        "points": 0,
-                                        "id": 4,
-                                        "completed": False
-                                    },
-                                    "2": {
-                                        "playCount": 0,
-                                        "started": False,
-                                        "points": 0,
-                                        "id": 4,
-                                        "completed": False
-                                    },
-                                    "3": {
-                                        "playCount": 0,
-                                        "started": False,
-                                        "points": 0,
-                                        "id": 4,
-                                        "completed": False
-                                    },
-                                    "4": {
-                                        "completed": False,
-                                        "playCount": 0,
-                                        "started": False,
-                                        "points": 0,
-                                        "id": 4
-                                    }
-                                    }
-                                }
-                                }
-                            }
-                            }
-                        }
-                        }
-                    }, 
-                }
-            
-            
-        )
-        student = json.loads(response) #string a json
+          
 
-        avatarText=json.dumps(student['avatar'])
-        gamestatusText = json.dumps(student['gameStatus'])
-
-        #school = School.all().first
-        #print (school)
-        """
-        school1 = School(
-        name = "dadadgdggdsdaasgggaa",
-        kotokan_id = "25842",
-        
-        ) 
-        db.session.add(school1)
-        db.session.commit()
-        """
-
-        teacher1 = Teacher(
-        name = "dssdssdafdfdsfdsd",
-        lastName = "dssdsssfdfdddsfdsd",
-        languaje ="es",
-        email="pepitsasssdsssdddso@gmail.com",
-        school_id=1,
-        password="123456789"
-        ) 
-        db.session.add(teacher1)
-        db.session.commit()
-        
-
-        #school1 = db.session.query(School).first()
-
-        student1 = Student(name=student["name"], avatar=avatarText, game_status= gamestatusText,kotokan_id=student["id"],teacher_id=1,school_id=1)
-        print ("adioss---------->>>>>>>>>>>>>>>>",avatarText)
-
-        print(student1)
-        
-        db.session.add(student1)
-        db.session.commit()
-       
 
 
 
@@ -355,14 +200,15 @@ class Student(db.Model):
     def __repr__(self):
         return '<Student %r>' % self.name
     def serialize(self):
+        
+        """game_status_json=json.loads(self.game_status)
+        avatar_json=json.loads(self.avatar) """
 
-        game_status_json=json.loads(self.game_status)
-        avatar_json=json.loads(self.avatar)
         return {
             "id": self.id,
             "name": self.name,
-            "game_status": game_status_json,
-            "avatar":avatar_json
+            "game_status": self.game_status,
+            "avatar":self.avatar
         }
 
 
