@@ -22,34 +22,30 @@ class SchoolManager():
         res = requests.request("POST", url , headers=headers)
         x = res.json()
 
-        kotokan_code=""
-        name1=""
+     
 
-        
-        #if len(x) < 1:
-        for i in range(len(x)):
-            for c,v in x[i].items():
-                if c=="schoolCode" and v!="": 
-                    kotokan_code=v
-                elif c=="name" and v!="":
-                    name1=v
-
-            TeachersManager.getTeachers(kotokan_code)            
-
-            if School.query.filter_by(kotokan_id=kotokan_code).first() is None:
-                school1=School(name=name1,kotokan_id=kotokan_code)
-                db.session.add(school1)
+        for school in x:
+            row = School.query.filter_by(kotokan_id=school["schoolCode"]).first()
+            
+            if not row:
+                row = School(
+                    kotokan_id=school["schoolCode"],
+                    name= school["name"],
+                )
+                db.session.add(row)
                 db.session.commit()
-                TeachersManager.getTeachers(kotokan_code)
+            TeachersManager.getTeachers(row) 
                 
 
 
 
 class TeachersManager():
     @staticmethod
-    def getTeachers(kotokan_code):
+    def getTeachers(school):
 
-        payload = "{\"schoolCode\": \"{TEST}\"}"
+        payload = {"schoolCode": school.kotokan_id}
+
+        #payload= f"{schoolCode: {kotokan_code}}"
         url =f"{API_HOST}/getTeachersBySchoolCode"
         headers = {
             'Authorization': API_TOKEN ,
@@ -57,56 +53,27 @@ class TeachersManager():
         }
 
 
-        res = requests.request("POST", url , headers=headers, data= payload)
-        print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@~~~~~~~~~~~~~~~~~~", res,payload)
-
-       
-        x = res.json()
+        response = requests.post( url , headers=headers, data= json.dumps(payload))
+        result = response.json()
         
         
 
-        kotokan_code=""
-        name1=""
-        language1=""
-        email1=""
-        lastName1=""
-        
-        
-
-        schoolId=""
-
-
-    
-
-        #if len(x) < 1:
-        for i in range(len(x)):
-            for c,v in x[i].items():
-                if c=="id" and v!="": 
-                    kotokan_code=v
-                elif c=="firstName" and v!="":
-                    name1=v
-                elif c=="language1" and v!="":
-                    language1=v
-                elif c=="email" and v!="":
-                    email1=v
-                elif c=="lastName" and v!="":
-                    lastName1=v
-                elif c=="schoolCode" and v!="":
-                    schoolFound= School.query.filter_by(kotokan_id=c).first()
-                    
-                    if not schoolFound:
-                        print ('No result found ####################################')
-                    print(schoolFound, "################################################")
-                    
-                    
-        
-        
-
-
-            if Teacher.query.filter_by(kotokan_id=kotokan_code).first() is None:
-                teacher1=Teacher(name=name1,kotokan_id=kotokan_code,email=email1,lastName=lastName1,languaje=language1, school_id=schoolId)
-                db.session.add(school1)
+        for teacher in result:
+            row = Teacher.query.filter_by(kotokan_id=teacher["id"]).first()
+            print(teacher["currentPlan"]["renewalDate"]["_seconds"])
+            
+            if not row:
+                row = Teacher(
+                    kotokan_id=teacher["id"],
+                    name= teacher["firstName"],
+                    lastName=teacher["lastName"],
+                    email=teacher["email"],
+                    languaje=teacher["language"],
+                    school_id=school.id
+                )
+                db.session.add(row)
                 db.session.commit()
+                    
          
 
         
