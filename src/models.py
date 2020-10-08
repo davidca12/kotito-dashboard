@@ -19,12 +19,10 @@ class SchoolManager():
             'Content-Type' : 'application/json'
         }
 
-        res = requests.request("POST", url , headers=headers)
-        x = res.json()
+        response = requests.request("POST", url , headers=headers)
+        result = response.json()
 
-     
-
-        for school in x:
+        for school in result:
             row = School.query.filter_by(kotokan_id=school["schoolCode"]).first()
             
             if not row:
@@ -36,9 +34,6 @@ class SchoolManager():
                 db.session.commit()
             TeachersManager.getTeachers(row) 
                 
-
-
-
 class TeachersManager():
     @staticmethod
     def getTeachers(school):
@@ -52,12 +47,9 @@ class TeachersManager():
             'Content-Type' : 'application/json'
         }
 
-
         response = requests.post( url , headers=headers, data= json.dumps(payload))
         result = response.json()
         
-        
-
         for teacher in result:
             row = Teacher.query.filter_by(kotokan_id=teacher["id"]).first()
             
@@ -74,12 +66,6 @@ class TeachersManager():
                 db.session.commit()
             StudentManager.getStudents(row,school.kotokan_id,school.id)
                     
-         
-
-        
-
-
-
 class StudentManager():
     @staticmethod
     def getStudents(teacher,schoolCode,schooldId):
@@ -137,21 +123,15 @@ class StudentManager():
                 row = Student(
                     kotokan_id=student["id"],
                     name= student["name"],
-                    avatar=1,
-                    game_status=0,
+                    avatar=json.dumps(student["avatar"]),
+                    game_status=json.dumps(student["gameStatus"]),
                     school_id=schooldId,
                     teacher_id=teacher.id
                 )
                 db.session.add(row)
                 db.session.commit()
-            StudentManager.getStudents(row,school.kotokan_id,school.id)
+
                 
-          
-
-
-
-
-
 class School(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     kotokan_id = db.Column(db.String(120), unique=True, nullable=False)
@@ -223,14 +203,14 @@ class Student(db.Model):
         return '<Student %r>' % self.name
     def serialize(self):
         
-        """game_status_json=json.loads(self.game_status)
-        avatar_json=json.loads(self.avatar) """
+        game_status_json=json.loads(self.game_status)
+        avatar_json=json.loads(self.avatar) 
 
         return {
             "id": self.id,
             "name": self.name,
-            "game_status": self.game_status,
-            "avatar":self.avatar
+            "game_status": game_status_json,
+            "avatar": avatar_json
         }
 
 
