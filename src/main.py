@@ -59,7 +59,7 @@ def token_required(f):
 
        try:
           data = jwt.decode(token, app.config["SECRET_KEY"])
-          kotokan_access_token = data['accessToken']
+          kotokan_access_token = data['user']['accessToken']
           current_teacher = Teacher.query.filter_by(id=data['id']).first()
        except: 
           return jsonify({'message': 'token is invalid'})
@@ -90,7 +90,7 @@ def login_user():
     if result:
         teacher = Teacher.query.filter_by(name=auth.username).first()
         if not(teacher):
-            teacher = Teacher(name=data['name'],email=data["email"], admin=False,school_id= data['schoolCODE'])
+            teacher = Teacher(name=data['name'],email=data["email"], admin=False,school_id= data['user']['schoolCode'])
             db.session.add(teacher)
             db.session.commit()
 
@@ -116,13 +116,12 @@ def school_data(school_id):
     return jsonify(school.serialize()), 200
 
 
-@app.route('/teachers/<int:teacher_id>/students', methods=['GET'])
-def teacher_and_students_data(teacher_id):
-    teacher = Teacher.query.get(teacher_id)
-
-    studentsList = list(map(lambda student: student.serialize(), teacher.students))
-    #return 'received'
-    return jsonify(studentsList), 200
+@app.route('/teachers/<int:teacher_id>/students', methods=['GET'])
+def teacher_and_students_data(teacher_id):
+    teacher = Teacher.query.get(teacher_id) 
+    studentsList = list(map(lambda student: student.serialize(), teacher.students))
+    #return 'received'
+    return jsonify(studentsList), 200
 
 
 @app.route('/teachers/<int:teacher_id>', methods=['GET'])
