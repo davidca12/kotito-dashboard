@@ -7,7 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 API_HOST = os.getenv('API_HOST')
-API_TOKEN=os.getenv('API_TOKEN')
+API_TOKEN= os.getenv('API_TOKEN')
 
 class SchoolManager():
     @staticmethod
@@ -131,7 +131,18 @@ class StudentManager():
                 db.session.add(row)
                 db.session.commit()
 
-                
+class SignInKotokanService():
+
+    @staticmethod
+    def login_in(email, password):
+        url = API_HOST + '/login'
+        myobj = {'email': email, 'password': password}
+        response = requests.post(url, data = myobj)
+        parsed_data = response.json()
+        message = parsed_data['message']
+        data = parsed_data['data']
+        return response.status_code == 201, message, data
+
 class School(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     kotokan_id = db.Column(db.String(120), unique=True, nullable=False)
@@ -152,7 +163,6 @@ class School(db.Model):
             " kotokan_id":self. kotokan_id
             # do not serialize the password, its a security breach
         }
-
 
 class Teacher(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -212,6 +222,8 @@ class Student(db.Model):
             "game_status": game_status_json,
             "avatar": avatar_json
         }
+
+
 
 
 

@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, Teacher, School, Student,StudentManager,SchoolManager,TeachersManager
+from models import db, Teacher, School, Student, StudentManager, SchoolManager, TeachersManager, SignInKotokanService
 import requests
 
 #Token and login
@@ -50,23 +50,25 @@ def token_required(f):
     def decorator(*args, **kwargs):
         
        token = None 
+       kotokan_access_token = None
        if 'x-access-tokens' in request.headers:  
           token = request.headers['x-access-tokens'] 
 
        if not token:  
           return jsonify({'message': 'a valid token is missing'})   
 
-       try:  
-          data = jwt.decode(token, app.config["SECRET_KEY"]) 
-          current_teacher = Teacher.query.filter_by(public_id=data['public_id']).first()
+       try:
+          data = jwt.decode(token, app.config["SECRET_KEY"])
+          kotokan_access_token = data['accessToken']
+          current_teacher = Teacher.query.filter_by(id=data['id']).first()
        except: 
-          return jsonify({'message': 'token is invalid'})  
+          return jsonify({'message': 'token is invalid'})
           
-       return f(current_teacher, *args,  **kwargs)  
+       return f(current_teacher, *args,  **kwargs)
     return decorator
 
 @app.route('/register', methods=['GET', 'POST'])
-def signup_user():  
+def signup_user():
     data = request.get_json()  
 
     hashed_password = generate_password_hash(data['password'], method='sha256')
@@ -78,20 +80,24 @@ def signup_user():
     return jsonify({'message': 'registered successfully'})
 
 @app.route('/login', methods=['GET', 'POST'])  
-def login_user(): 
- 
-    auth = request.authorization   
+def login_user():
+    auth = request.authorization
 
     if not auth or not auth.username or not auth.password:  
-        return make_response('could not verify', 401, {'WWW.Authentication': 'Basic realm: "login required"'})    
+        return make_response('could not verify', 401, {'WWW.Authentication': 'Basic realm: "login required"'})
+    
+    result, message, data = SignInKotokanService.login_in(auth.username,auth.password)
+    if result:
+        teacher = Teacher.query.filter_by(name=auth.username).first()
+        if not(teacher):
+            teacher = Teacher(name=data['name'],email=data["email"], admin=False,school_id= data['schoolCODE'])
+            db.session.add(teacher)
+            db.session.commit()
 
-    teacher = Teacher.query.filter_by(name=auth.username).first()   
-       
-    if check_password_hash(teacher.password, auth.password):  
-        token = jwt.encode({'public_id': teacher.public_id, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config['SECRET_KEY'])  
-        return jsonify({'token' : token.decode('UTF-8')}) 
+        token = jwt.encode({'id': teacher.id, 'accessToken': data['accessToken'],'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config['SECRET_KEY'])
+        return jsonify({'token' : token.decode('UTF-8')})
 
-    return make_response('could not verify',  401, {'WWW.Authentication': 'Basic realm: "login required"'})  
+    return make_response('Not possible to log in',  401, {'msg': message})
 
 @app.route('/schools', methods=['GET'])
 def all_school():
@@ -112,7 +118,7 @@ def school_data(school_id):
 
 @app.route('/teachers/<int:teacher_id>/students', methods=['GET'])
 def teacher_and_students_data(teacher_id):
-    teacher = Teacher.query.get(teacher_id) 
+    teacher = Teacher.query.get(teacher_id)
 
     studentsList = list(map(lambda student: student.serialize(), teacher.students))
     #return 'received'
