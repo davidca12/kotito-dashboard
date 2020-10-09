@@ -109,6 +109,16 @@ def school_data(school_id):
     
     return jsonify(school.serialize()), 200
 
+
+@app.route('/teachers/<int:teacher_id>/students', methods=['GET'])
+def teacher_and_students_data(teacher_id):
+    teacher = Teacher.query.get(teacher_id) 
+
+    studentsList = list(map(lambda student: student.serialize(), teacher.students))
+    #return 'received'
+    return jsonify(studentsList), 200
+
+
 @app.route('/teachers/<int:teacher_id>', methods=['GET'])
 def teacher_data(teacher_id):
 
