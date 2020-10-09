@@ -21,6 +21,7 @@ from functools import wraps
 
 #from models import Person
 
+
 app = Flask(__name__)
 app.url_map.strict_slashes = False
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_CONNECTION_STRING')
@@ -83,18 +84,23 @@ def signup_user():
 def login_user():
     auth = request.authorization
 
-    if not auth or not auth.username or not auth.password:  
-        return make_response('could not verify', 401, {'WWW.Authentication': 'Basic realm: "login required"'})
+    print("#####################",auth)
+
+    """ if not auth or not auth.email or not auth.password:  
+        return make_response('could not verify', 401, {'WWW.Authentication': 'Basic realm: "login required"'}) """
     
-    result, message, data = SignInKotokanService.login_in(auth.username,auth.password)
+    result, message, data = SignInKotokanService.login_in(auth.username,auth.password) 
+
+   
+
     if result:
-        teacher = Teacher.query.filter_by(name=auth.username).first()
+        teacher = Teacher.query.filter_by(email=auth.username).first()
         if not(teacher):
-            teacher = Teacher(name=data['name'],email=data["email"], admin=False,school_id= data['user']['schoolCode'])
+            teacher = Teacher(name=data['user']['firstName'],email=data['user']["email"], admin=False,school_id= data['user']['schoolCode'],kotokan_id=data['user']['id'],lastName=data['user']['lastName'],languaje=data['user']['language'])
             db.session.add(teacher)
             db.session.commit()
 
-        token = jwt.encode({'id': teacher.id, 'accessToken': data['accessToken'],'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config['SECRET_KEY'])
+        token = jwt.encode({'id': teacher.id, 'accessToken': data['user']['accessToken'],'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config['SECRET_KEY'])
         return jsonify({'token' : token.decode('UTF-8')})
 
     return make_response('Not possible to log in',  401, {'msg': message})

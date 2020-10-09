@@ -141,7 +141,7 @@ class SignInKotokanService():
         parsed_data = response.json()
         message = parsed_data['message']
         data = parsed_data['data']
-        return response.status_code == 201, message, data
+        return response.status_code==200, message, data
 
 class School(db.Model):
     id = db.Column(db.Integer, primary_key=True)
