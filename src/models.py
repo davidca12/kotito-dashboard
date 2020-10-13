@@ -14,6 +14,7 @@ class SchoolManager():
     def getSchools():
 
         url =f"{API_HOST}/getSchools"
+    
         headers = {
             'Authorization': API_TOKEN ,
             'Content-Type' : 'application/json'

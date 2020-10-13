@@ -49,7 +49,6 @@ def sitemap():
 def token_required(f):  
     @wraps(f)  
     def decorator(*args, **kwargs):
-        
        token = None 
        kotokan_access_token = None
        if 'x-access-tokens' in request.headers:  
@@ -86,8 +85,8 @@ def login_user():
 
     print("#####################",auth)
 
-    """ if not auth or not auth.email or not auth.password:  
-        return make_response('could not verify', 401, {'WWW.Authentication': 'Basic realm: "login required"'}) """
+    if not auth or not auth.email or not auth.password:  
+        return make_response('could not verify', 401, {'WWW.Authentication': 'Basic realm: "login required"'})
     
     result, message, data = SignInKotokanService.login_in(auth.username,auth.password) 
 
@@ -121,10 +120,16 @@ def school_data(school_id):
     
     return jsonify(school.serialize()), 200
 
-
 @app.route('/teachers/<int:teacher_id>/students', methods=['GET'])
 def teacher_and_students_data(teacher_id):
     teacher = Teacher.query.get(teacher_id) 
+    studentsList = list(map(lambda student: student.serialize(), teacher.students))
+    #return 'received'
+    return jsonify(studentsList), 200
+
+@app.route('/students', methods=['GET'])
+@token_required
+def teacher_and_students_data(teacher):
     studentsList = list(map(lambda student: student.serialize(), teacher.students))
     #return 'received'
     return jsonify(studentsList), 200
