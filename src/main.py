@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, Teacher, School, Student, StudentManager, SchoolManager, TeachersManager, SignInKotokanService, StageManager
+from models import db, Teacher, School, Student, StudentManager, SchoolManager, TeachersManager, SignInKotokanService, StageManager, Stage
 import requests
 
 #Token and login
@@ -166,6 +166,24 @@ def all_student_data():
     all_students= list(map(lambda x: x.serialize(), student))
     
     return jsonify(all_students), 200
+
+@app.route('/stages', methods=['GET']) 
+def all_stages():
+
+    stage= Stage.query.all()
+    all_stages= list(map(lambda x: x.serialize(), stage))
+    
+    return jsonify(all_stages), 200
+
+@app.route('/stages/<int:stage_id>', methods=['GET']) 
+def stage(stage_id):
+
+    stage= Stage.query.get(stage_id)
+
+    return jsonify(stage.serialize()), 200
+
+
+
 
 
 # this only runs if `$ python src/main.py` is executed
