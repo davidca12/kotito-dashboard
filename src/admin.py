@@ -1,6 +1,6 @@
 import os
 from flask_admin import Admin
-from models import db, Teacher,School,Student
+from models import db, Teacher,School,Student,Stage
 from flask_admin.contrib.sqla import ModelView
 
 def setup_admin(app):
@@ -13,6 +13,8 @@ def setup_admin(app):
     admin.add_view(ModelView(Teacher, db.session))
     admin.add_view(ModelView(School, db.session))
     admin.add_view(ModelView(Student, db.session))
+    admin.add_view(ModelView(Stage, db.session))
+
     
 
 

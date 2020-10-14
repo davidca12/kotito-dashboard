@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, Teacher, School, Student, StudentManager, SchoolManager, TeachersManager, SignInKotokanService
+from models import db, Teacher, School, Student, StudentManager, SchoolManager, TeachersManager, SignInKotokanService, StageManager
 import requests
 
 #Token and login
@@ -40,6 +40,7 @@ def handle_invalid_usage(error):
 @app.route('/')
 def sitemap():
     SchoolManager.getSchools()
+    StageManager.getStage()
 
     #StudentManager.getStudents(11,"oi0ztsj1sBPvSvWUgMvyK2SEnrF3","testCode",6)
 
@@ -121,7 +122,7 @@ def school_data(school_id):
     return jsonify(school.serialize()), 200
 
 @app.route('/teachers/<int:teacher_id>/students', methods=['GET'])
-def teacher_and_students_data(teacher_id):
+def teacher_and_students_data12(teacher_id):
     teacher = Teacher.query.get(teacher_id) 
     studentsList = list(map(lambda student: student.serialize(), teacher.students))
     #return 'received'

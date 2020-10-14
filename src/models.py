@@ -9,12 +9,64 @@ db = SQLAlchemy()
 API_HOST = os.getenv('API_HOST')
 API_TOKEN= os.getenv('API_TOKEN')
 
+
+class StageManager():
+    @staticmethod
+    def getStage():
+        url =f"{API_HOST}/getStages"
+        headers = {
+            'Authorization': API_TOKEN ,
+            'Content-Type' : 'application/json'
+        }
+
+        response = requests.post(url, headers=headers)
+        result = response.json()
+
+        for stageKoto in result["stages"]:
+            stage = {
+                "kotokan_id": 0,
+                "content": {},
+                "levels" : []
+            }
+            
+            stage["content"] = {
+                "header" : stageKoto["stage"]["content"]["en"]["header"], 
+                "name" : stageKoto["stage"]["content"]["en"]["name"]
+            } 
+            stage["kotokan_id"] = stageKoto["stage"]["id"]
+
+            if len(stageKoto["levels"]) == 0 :
+                continue
+
+            for levelKoto in stageKoto["levels"]:
+                problemCount = len(levelKoto["problems"])
+                stage["levels"].append({ "problemCount" : problemCount, "id" : levelKoto["level"]["id"] })
+
+            row = Stage.query.filter_by(kotokan_id = stageKoto["stage"]["id"]).first()
+
+            if row:
+                row.content = json.dumps(stage["content"]) 
+                row.levels = json.dumps(stage["levels"])
+                db.session.commit()
+            else:
+                row = Stage(
+                    kotokan_id= stage["kotokan_id"],
+                    content =json.dumps(stage["content"]), 
+                    levels = json.dumps(stage["levels"])
+                )
+                db.session.add(row)
+                db.session.commit()
+                
+ 
+            
+
 class SchoolManager():
     @staticmethod
     def getSchools():
 
         url =f"{API_HOST}/getSchools"
     
+
         headers = {
             'Authorization': API_TOKEN ,
             'Content-Type' : 'application/json'
@@ -223,6 +275,26 @@ class Student(db.Model):
             "game_status": game_status_json,
             "avatar": avatar_json
         }
+
+
+class Stage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    kotokan_id= db.Column(db.Integer, unique=True, nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    levels = db.Column(db.Text, nullable=False)
+
+    def __repr__(self):
+        return '<Stage %r>' % self.kotokan_id
+    def serialize(self):
+
+        content_json=json.loads(self.content)
+        levels_json=json.loads(self.levels) 
+        return {
+            "content": self.content,
+            "levels": self.levels,  
+        } 
+    
+    
 
 
 
