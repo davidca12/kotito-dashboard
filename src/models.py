@@ -291,7 +291,8 @@ class Stage(db.Model):
         levels_json=json.loads(self.levels) 
         return {
             "content": content_json,
-            "levels": levels_json
+            "levels": levels_json,
+            "kotokan_id" : self.kotokan_id
         } 
     
     
