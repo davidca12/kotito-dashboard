@@ -123,7 +123,8 @@ class StudentManager():
     @staticmethod
     def getStudents(teacher,schoolCode,schooldId):
         #json a string [] arraylista, {}objeto,diccionario
-        
+        #"accountId": teacher.kotokan_id, 
+                
         payload = {"accountId": teacher.kotokan_id,"schoolCode" : schoolCode}
 
         #payload= f"{schoolCode: {kotokan_code}}"

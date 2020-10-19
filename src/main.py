@@ -50,22 +50,26 @@ def sitemap():
 def token_required(f):  
     @wraps(f)  
     def decorator(*args, **kwargs):
-       token = None 
-       kotokan_access_token = None
-       if 'x-access-tokens' in request.headers:  
-          token = request.headers['x-access-tokens'] 
+        token = None 
+        kotokan_access_token = None
+        if 'x-access-tokens' in request.headers:  
+            token = request.headers['x-access-tokens'] 
+        print(token)
+        if not token:  
+            return jsonify({'message': 'a valid token is missing'})   
 
-       if not token:  
-          return jsonify({'message': 'a valid token is missing'})   
+        try:
+            data = jwt.decode(token, app.config["SECRET_KEY"])
+            print("@@data", data)
+            kotokan_access_token = data['accessToken']
+            print("@@koto",kotokan_access_token)
+            current_teacher = Teacher.query.filter_by(id=data['id']).first()
+            print("@@current",current_teacher)
 
-       try:
-          data = jwt.decode(token, app.config["SECRET_KEY"])
-          kotokan_access_token = data['user']['accessToken']
-          current_teacher = Teacher.query.filter_by(id=data['id']).first()
-       except: 
-          return jsonify({'message': 'token is invalid'})
+        except: 
+            return jsonify({'message': 'token is invalid'})
           
-       return f(current_teacher, *args,  **kwargs)
+        return f(current_teacher, *args,  **kwargs)
     return decorator
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -86,7 +90,7 @@ def login_user():
 
     print("#####################",auth)
 
-    if not auth or not auth.email or not auth.password:  
+    if not auth or not auth.username or not auth.password:  
         return make_response('could not verify', 401, {'WWW.Authentication': 'Basic realm: "login required"'})
     
     result, message, data = SignInKotokanService.login_in(auth.username,auth.password) 
@@ -131,9 +135,19 @@ def teacher_and_students_data12(teacher_id):
 @app.route('/students', methods=['GET'])
 @token_required
 def teacher_and_students_data(teacher):
-    studentsList = list(map(lambda student: student.serialize(), teacher.students))
+
+    studentFound = Student.query.filter_by(school_id=teacher.school_id)
+
+    studentsList = list(map(lambda student: student.serialize(), studentFound ))
     #return 'received'
     return jsonify(studentsList), 200
+
+""" @app.route('/students', methods=['GET'])
+@token_required
+def teacher_and_students_data(teacher):
+    studentsList = list(map(lambda student: student.serialize(), teacher.students))
+    #return 'received'
+    return jsonify(studentsList), 200"""
 
 
 @app.route('/teachers/<int:teacher_id>', methods=['GET'])
