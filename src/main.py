@@ -54,17 +54,17 @@ def token_required(f):
         kotokan_access_token = None
         if 'x-access-tokens' in request.headers:  
             token = request.headers['x-access-tokens'] 
-        print(token)
+        
         if not token:  
             return jsonify({'message': 'a valid token is missing'})   
 
         try:
             data = jwt.decode(token, app.config["SECRET_KEY"])
-            print("@@data", data)
+            
             kotokan_access_token = data['accessToken']
-            print("@@koto",kotokan_access_token)
+           
             current_teacher = Teacher.query.filter_by(id=data['id']).first()
-            print("@@current",current_teacher)
+            
 
         except: 
             return jsonify({'message': 'token is invalid'})
@@ -88,7 +88,7 @@ def signup_user():
 def login_user():
     auth = request.authorization
 
-    print("#####################",auth)
+
 
     if not auth or not auth.username or not auth.password:  
         return make_response('could not verify', 401, {'WWW.Authentication': 'Basic realm: "login required"'})
@@ -109,14 +109,24 @@ def login_user():
 
     return make_response('Not possible to log in',  401, {'msg': message})
 
-@app.route('/schools', methods=['GET'])
-def all_school():
+@app.route('/allschools', methods=['GET'])
+def all_school123():
 
     schools= School.query.all()
     all_schools= list(map(lambda x: x.serialize(), schools))
 
 
     return jsonify(all_schools), 200
+
+@app.route('/schools', methods=['GET'])
+@token_required
+def all_school(teacher):
+
+    schoolFound = School.query.filter_by(id=teacher.school_id)
+    schoolList= list(map(lambda school: school.serialize(), schoolFound))
+    print(schoolList)
+
+    return jsonify(schoolList), 200
 
 @app.route('/schools/<int:school_id>', methods=['GET'])
 def school_data(school_id):
@@ -159,12 +169,13 @@ def teacher_data(teacher_id):
     
 
 @app.route('/teachers', methods=['GET'])
-def handle_hello():
+@token_required
+def handle_hello(teacher):
 
-    teachers= Teacher.query.all()
-    all_teachers= list(map(lambda x: x.serialize(), teachers))
+    teacher= Teacher.query.filter_by(id=teacher.id)
+    listTeacher= list(map(lambda x: x.serialize(), teacher))
     
-    return jsonify(all_teachers), 200
+    return jsonify(listTeacher), 200
        
 @app.route('/students/<int:student_id>', methods=['GET']) 
 def student_data(student_id):
